@@ -301,7 +301,7 @@ gh repo create comandos --public --source=.
 ### Sube los cambios:
 
 ```powershell
-git push
+git push -u origin main
 ```
 
 <br>
@@ -335,7 +335,7 @@ gh repo create comandos --private --source=.
 ### Sube los cambios:
 
 ```powershell
-git push
+git push -u origin main
 ```
 
 </details>
