@@ -76,6 +76,22 @@ Muestra los logs del proceso backend:
 pm2 logs api
 ```
 
+---
+
+### Limpiar los logs
+
+Limpiar todos los logs:
+
+```bash
+pm2 flush
+```
+
+Limpiar un log específico:
+
+```bash
+pm2 flush api
+```
+
 <br>
 
 ---

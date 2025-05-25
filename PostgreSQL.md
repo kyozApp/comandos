@@ -72,8 +72,11 @@ pg_restore -h localhost -U usuario -d neuromedicdb --data-only -t nombre_tabla t
 ### Instalar PostgreSQL:
 
 ```bash
-sudo apt install postgresql postgresql-contrib postgresql-client -y
+https://www.postgresql.org/download/linux/ubuntu/
 ```
+
+## Opcional
+
 
 ### Verificar el status:
 
@@ -96,20 +99,20 @@ sudo systemctl status postgresql
 ### Acceder al directorio de configuración de PostgreSQL:
 
 ```bash
-ll /etc/postgresql/16/main/
+ll /etc/postgresql/17/main/
 ```
 
 ### Cambiar los permisos de los archivos de configuración:
 
 ```bash
-sudo chmod 600 /etc/postgresql/16/main/postgresql.conf
-sudo chmod 600 /etc/postgresql/16/main/pg_hba.conf
+sudo chmod 600 /etc/postgresql/17/main/postgresql.conf
+sudo chmod 600 /etc/postgresql/17/main/pg_hba.conf
 ```
 
 ### Editar el archivo de configuración:
 
 ```bash
-sudo nano /etc/postgresql/16/main/postgresql.conf
+sudo nano /etc/postgresql/17/main/postgresql.conf
 ```
 
 - Presiona `ctrl + w`, escribe `localhost` y descomenta (quita el `#` de) la línea:
@@ -129,7 +132,7 @@ sudo nano /etc/postgresql/16/main/postgresql.conf
 ### Editar el archivo `pg_hba.conf`:
 
 ```bash
-sudo nano /etc/postgresql/16/main/pg_hba.conf
+sudo nano /etc/postgresql/17/main/pg_hba.conf
 ```
 
 - Navega hasta el final donde están los accesos locales. Cambia debajo de 'local':
