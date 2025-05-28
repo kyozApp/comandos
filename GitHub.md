@@ -17,6 +17,7 @@
 - [Crear y subir un proyecto](#crear-y-subir-un-proyecto)
 - [Ver cambios antes de actualizar un proyecto](#ver-cambios-antes-de-actualizar-un-proyecto)
 - [Subir cambios al repositorio individual o en equipo](#subir-cambios-al-repositorio)
+- [Actualizar cambios al repositorio desplegado en el VPS en Producción](#actualizar-cambios-al-repositorio-desplegado)
 
 ---
 
@@ -438,3 +439,51 @@ gh pr create --base main --head Erick
 
 ---
 
+## <a id="actualizar-cambios-al-repositorio-desplegado"></a>**Actualizar cambios al repositorio desplegado**
+
+<details>
+<summary>Haz clic para ver</summary>
+
+### Descarga cambios pero no los aplica:
+
+```powershell
+git fetch
+```
+
+### Descarga y aplica los cambios:
+
+```powershell
+git pull
+```
+
+<br>
+
+## Si modificasteis el proyecto desplegado
+
+### Descarta los cambios locales en db.ts:
+
+```powershell
+git checkout -- src/db/db.ts
+```
+
+<br>
+
+## Si deseas visualizar el archivo descargado
+
+### Muestra los archivos modificados tras el fetch:
+
+```powershell
+git diff HEAD@{1} HEAD --name-only
+```
+
+### Muestra las líneas modificadas en ese archivo:
+
+```powershell
+git diff HEAD@{1} HEAD src/components/Blog.astro
+```
+
+</details>
+
+<br>
+
+---
