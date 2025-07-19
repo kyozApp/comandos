@@ -1,0 +1,18 @@
+# Para ejecutar escribe:
+# docker compose up -d
+services:
+  db:
+    container_name: postgresql-neuromedic
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: neuromedic
+      POSTGRES_PASSWORD: neuromedic
+      POSTGRES_DB: neuromedicdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql_neuromedic_data:/var/lib/postgresql/data
+
+volumes:
+  postgresql_neuromedic_data:

@@ -3,6 +3,7 @@
 **Ir a:**
 
 - [Inicio](./README.md)
+- [PowerShell](./PowerShell.md)
 - [Node.js](./NodeJS.md)
 - [GitHub](./GitHub.md)
 - [PM2](./PM2.md)

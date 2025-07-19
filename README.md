@@ -5,6 +5,7 @@ Estos son los comandos que uso habitualmente:
 **Ir a:**
 
 - [Node.js](./NodeJS.md)
+- [PowerShell](./PowerShell.md)
 - [GitHub](./GitHub.md)
 - [PostgreSQL](./PostgreSQL.md)
 - [PM2](./PM2.md)

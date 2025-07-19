@@ -1,0 +1,11 @@
+# Para ejecutar escribe:
+# docker compose up -d
+# Para navegar:
+# docker exec -i sqlite-server write_query --query "CREATE TABLE usuarios (id INTEGER PRIMARY KEY, nombre TEXT, email TEXT);"
+services:
+  sqlite:
+    container_name: sqlite-server
+    image: mcp/sqlite
+    volumes:
+      - ./sqlite_data:/mcp
+    command: ["--db-path", "/mcp/db.sqlite"]

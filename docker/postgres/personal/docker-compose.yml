@@ -1,0 +1,19 @@
+# Para ejecutar escribe:
+# docker compose up -d
+services:
+  db:
+    container_name: mysql-personal
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: prueba123
+      MYSQL_USER: prueba
+      MYSQL_PASSWORD: prueba
+      MYSQL_DATABASE: prueba
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_personal_data:/var/lib/mysql
+
+volumes:
+  mysql_personal_data:
