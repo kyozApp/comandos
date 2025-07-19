@@ -22,11 +22,17 @@ New-Item -Path $PROFILE -Type File -Force
 notepad $PROFILE
 ```
 
+### Para poder usar node, npm, python, etc sin profile:
+
+```bash
+docker run --rm -it -v ${PWD}:/app -w /app node:22-alpine sh
+```
+
 <br>
 
 ---
 
-### Configuración básica:
+### Configuración básica dentro el profile:
 
 - Para tener tu usuario personalizado:
 
