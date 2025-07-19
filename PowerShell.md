@@ -28,6 +28,10 @@ notepad $PROFILE
 docker run --rm -it -v ${PWD}:/app -w /app node:22-alpine sh
 ```
 
+```bash
+docker run --rm -it -v ${PWD}:/app -w /app python:latest sh
+```
+
 <br>
 
 ---
