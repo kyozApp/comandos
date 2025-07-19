@@ -54,6 +54,10 @@ docker run --rm -it -v ${PWD}:/app -w /app python:latest sh
     function node {
         docker run --rm -v ${PWD}:/app -w /app node:22-alpine node @args
     }
+
+    function docker-node {
+        docker run --rm -it -v ${PWD}:/app -w /app node:22-alpine sh
+    }
     ```
 
 - Para poder usar python y pip con docker:
@@ -65,6 +69,10 @@ docker run --rm -it -v ${PWD}:/app -w /app python:latest sh
 
     function pip {
         docker run --rm -v ${PWD}:/app -w /app python:latest pip @args
+    }
+
+    function docker-python {
+        docker run --rm -it -v ${PWD}:/app -w /app python:latest sh
     }
     ```
 
