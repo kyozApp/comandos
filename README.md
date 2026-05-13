@@ -2,14 +2,9 @@
 
 Estos son los comandos que uso habitualmente:
 
-**Ir a:**
-
-- [Node.js](./NodeJS.md)
-- [PowerShell](./PowerShell.md)
-- [GitHub](./GitHub.md)
-- [PostgreSQL](./PostgreSQL.md)
-- [PM2](./PM2.md)
-- [Caddy](./Caddy.md)
+> [!NOTE]
+> **Navegación:**
+> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
 
 ---
 

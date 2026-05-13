@@ -1,5 +1,11 @@
 # 🚀 Guía Profesional de GitHub (Standard Moderno)
 
+> [!NOTE]
+> **Navegación:**
+> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
+
+---
+
 Esta guía define el estándar de excelencia para el manejo de repositorios. No es solo una lista de comandos, es un **manifiesto de trabajo** diseñado para la colaboración, la escalabilidad y la paz mental.
 
 ---
