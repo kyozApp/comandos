@@ -1,13 +1,10 @@
 # Instalación de Caddy en VPS
 
-**Ir a:**
+> [!NOTE]
+> **Navegación:**
+> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
 
-- [Inicio](./README.md)
-- [PowerShell](./PowerShell.md)
-- [Node.js](./NodeJS.md)
-- [GitHub](./GitHub.md)
-- [PostgreSQL](./PostgreSQL.md)
-- [PM2](./PM2.md)
+---
 
 ### Descargar e instalar Caddy desde repositorio oficial:
 
