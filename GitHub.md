@@ -110,14 +110,23 @@ No usamos nombres propios (`erick/`, `dev/`). Usamos el **propósito**.
 | `refactor/` | Mejora de código sin cambiar lógica | `refactor/auth-logic` |
 
 ### Commits Semánticos (Conventional Commits)
-Tus mensajes de commit deben contar una historia clara.
-**Formato:** `tipo: descripción corta`
+Tus mensajes de commit deben contar una historia clara. 
+**Formato:** `tipo(alcance): descripción corta`
+
+| Tipo | Uso | Ejemplo |
+| :--- | :--- | :--- |
+| `feat` | Nueva característica | `feat(auth): login con google` |
+| `fix` | Error corregido | `fix(ui): margen en botones` |
+| `chore` | Tarea técnica | `chore(deps): update vite` |
+| `docs` | Solo documentación | `docs(readme): corregir enlaces` |
 
 ```powershell
-git commit -m "feat: implementar autenticación con JWT"
-git commit -m "fix: corregir salto de línea en el pie de página"
-git commit -m "chore: configurar eslint y prettier"
+git commit -m "feat(auth): implementar JWT"
+git commit -m "fix(css): corregir salto de línea"
+git commit -m "chore(config): configurar prettier"
 ```
+> [!TIP]
+> El uso de paréntesis para el "alcance" (scope) es opcional pero altamente recomendado en proyectos grandes para saber exactamente qué módulo tocaste.
 
 ---
 
@@ -185,14 +194,29 @@ git push -u origin poc/propuesta-visual-v2
 
 Integrar cambios de forma segura es la marca de un desarrollador senior.
 
-### El "Safe Merge" (Sincronización Pre-Integración)
+### El "Safe Sync" (Sincronización Pre-Integración)
+
 Antes de pedir un Pull Request, asegúrate de que tu rama está al día con `main` para evitar conflictos.
+
+**Opción A: La forma tradicional (Merge)**
+Es la más segura si eres principiante. Crea un commit extra de fusión.
 ```powershell
 git switch main
 git pull origin main
-git switch feat/tu-tarea
+git switch feat/nombre-de-la-tarea
 git merge main
 ```
+
+**Opción B: La forma profesional (Rebase)**
+Mantiene un historial limpio y lineal sin commits basura de "Merge".
+```powershell
+git switch main
+git pull origin main
+git switch feat/nombre-de-la-tarea
+git rebase main
+```
+> [!WARNING]
+> Si usas **Rebase** y ya habías subido tu rama a GitHub, deberás forzar la subida con `git push -f` (force), ya que estás reescribiendo la historia de la rama.
 
 ### Crear un Pull Request (PR) desde Terminal
 No pierdas tiempo en la web de GitHub. Usa la CLI.
@@ -395,11 +419,15 @@ git push origin --delete feat/nombre-de-la-tarea
 
 ### Actualización de VPS (Producción)
 En el servidor, no queremos "desarrollar", solo queremos los cambios exactos de `main`.
+
 ```powershell
 # La forma segura: Bajar cambios y forzar que el estado local sea igual al remoto
 git fetch origin
 git reset --hard origin/main
 ```
+
+> [!CAUTION]
+> **Peligro:** `git reset --hard` borrará cualquier cambio manual que hayas hecho en el servidor. Sin embargo, **no borrará** archivos ignorados (como `.env`), por lo que tus secretos están a salvo.
 
 ---
 
@@ -408,7 +436,7 @@ git reset --hard origin/main
 | Acción | Comando |
 | :--- | :--- |
 | Nueva Tarea | `git switch -c feat/nombre-de-la-tarea` |
-| Guardar | `git add .` + `git commit -m "tipo: mensaje"` |
+| Guardar | `git add .` + `git commit -m "tipo(scope): mensaje"` |
 | Subir | `git push` (o `git push -u origin feat/nombre-de-la-tarea` la primera vez) |
 | Integrar | `gh pr create --fill` |
 | Pánico | `git restore .` |
