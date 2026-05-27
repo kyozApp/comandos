@@ -2,11 +2,11 @@
 
 > [!NOTE]
 > **Navegación:**
-> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
+> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐳 **Docker**](./Docker.md) • [🐘 **Drizzle**](./Drizzle.md) • [⚡ **SvelteKit**](./SvelteKit.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
 
 ---
 
-## Indice
+## Índice
 
 - [Instalación en Windows](#instalación-en-windows)
 - [Instalación en Linux](#instalación-en-linux)
@@ -24,7 +24,7 @@
 winget install Schniz.fnm
 ```
 
-### Reinicia el terminal y instala Node.js:
+### Reinicia la terminal e instala Node.js:
 
 ```powershell
 fnm install 22
@@ -48,7 +48,7 @@ New-Item -Path $PROFILE -Type File -Force
 fnm env --use-on-cd | Out-String | Invoke-Expression
 ```
 
-### Reinicia y verifica q se instalo:
+### Reinicia y verifica que se instaló:
 
 ```powershell
 node -v
@@ -80,19 +80,19 @@ pnpm -v
 
 ### Encuentra la ubicación de `fnm.exe` y agrégalo al path:
 
-Agregar al path la ruta que aparece cuando ejecutas el comando:
+Agrega al path la ruta que aparece cuando ejecutas el comando:
 
 ```powershell
 Get-Command fnm
 ```
 
-### Verifica si instalo Node:
+### Verifica si se instaló Node:
 
 ```powershell
 node -v
 ```
 
-### Verifica si instalo PNPM:
+### Verifica si se instaló PNPM:
 
 ```powershell
 pnpm -v
@@ -127,7 +127,7 @@ source /root/.bashrc
 fnm --version
 ```
 
-###  Instalar Node v22
+### Instalar Node v22:
 
 ```powershell
 fnm install 22
@@ -151,13 +151,13 @@ pnpm setup
 source ~/.bashrc
 ```
 
-### Verifica la instalación de Node.js
+### Verifica la instalación de Node.js:
 
 ```powershell
 node -v
 ```
 
-### Verifica la instalación de PNPM
+### Verifica la instalación de PNPM:
 
 ```powershell
 pnpm -v

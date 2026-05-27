@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > **Navegación:**
-> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
+> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐳 **Docker**](./Docker.md) • [🐘 **Drizzle**](./Drizzle.md) • [⚡ **SvelteKit**](./SvelteKit.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
 
 ---
 
@@ -204,11 +204,11 @@ git restore .                      # Restaura TODO (Pánico)
 git restore --staged src/archivo.ts # Saca del add
 ```
 
-### ¿Olvidaste crear la rama y editaste Main?
+### ¿Olvidaste crear la rama y editaste main?
 
 No entres en pánico. Dependiendo de si ya hiciste commit o no, hay dos salidas:
 
-#### Escenario A: Editaste archivos pero NO has hecho commit
+#### Escenario A: Editaste archivos pero NO has hecho commit en main
 
 ```powershell
 git switch -c feat/nombre-de-la-tarea # 1. Crea y salta con tus cambios
@@ -217,7 +217,7 @@ git commit -m "feat(scope): mensaje" # 3. Guarda en la nueva rama
 git push -u origin feat/nombre-de-la-tarea # 4. Sube y respalda en la nube
 ```
 
-#### Escenario B: ¡Ya hice el commit en Main!
+#### Escenario B: ¡Ya hice el commit en main!
 
 ```powershell
 git branch feat/nombre-de-la-tarea # 1. Captura el commit en nueva rama

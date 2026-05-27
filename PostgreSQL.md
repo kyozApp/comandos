@@ -2,11 +2,11 @@
 
 > [!NOTE]
 > **Navegación:**
-> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
+> [🏠 **Inicio**](./README.md) • [📦 **Node.js**](./NodeJS.md) • [🐚 **PowerShell**](./PowerShell.md) • [🚀 **GitHub**](./GitHub.md) • [🐳 **Docker**](./Docker.md) • [🐘 **Drizzle**](./Drizzle.md) • [⚡ **SvelteKit**](./SvelteKit.md) • [🐘 **Postgres**](./PostgreSQL.md) • [⚙️ **PM2**](./PM2.md) • [🔒 **Caddy**](./Caddy.md)
 
 ---
 
-## Indice
+## Índice
 
 - [Comandos básicos](#comandos)
 - [Instalación de PostgreSQL en VPS](#instalación)
