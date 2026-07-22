@@ -254,6 +254,7 @@ git push origin --delete nombre-rama # Borra en GitHub
 | **Subir**       | `git push`                                             |
 | **Integrar**    | `gh pr create --fill`                                  |
 | **Pánico**      | `git restore .`                                        |
+| **Limpiar cache** | `git rm --cached .env`                               |
 
 ---
 
