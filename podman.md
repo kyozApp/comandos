@@ -48,7 +48,7 @@ loginctl show-user $USER | grep Linger
 ### Configuración opcional del motor (containers.conf)
 
 > [!TIP]
-> En Ubuntu 26 con Systemd activo, Podman 5+ utiliza `systemd` (cgroups v2) y `journald` de forma nativa sin configuración adicional. Puedes crear `containers.conf` si deseas silenciar el aviso informativo del proveedor externo al ejecutar `podman compose`.
+> En Ubuntu 26 con Systemd activo, Podman 5+ utiliza `systemd` (cgroups v2) y `journald` de forma nativa sin configuración adicional. Puedes crear `containers.conf` si deseas silenciar el aviso informativo del proveedor externo al ejecutar `podman-compose`.
 
 ```bash
 # Crear la carpeta de configuración de usuario si no existe
@@ -85,29 +85,29 @@ podman info
 ## 4. Orquestación con Podman Compose
 
 > [!NOTE]
-> Podman 5+ incluye el subcomando nativo `podman compose` (con espacio), que delega automáticamente en `podman-compose`.
+> Podman 5+ incluye el subcomando nativo `podman-compose` (con espacio), que delega automáticamente en `podman-compose`.
 
 ```bash
 # Levantar el stack multicontenedor en segundo plano
-podman compose up -d
+podman-compose up -d
 
 # Levantar servicios forzando la reconstrucción previa de imágenes
-podman compose up -d --build
+podman-compose up -d --build
 
 # Ver y seguir en tiempo real los registros de todo el stack
-podman compose logs -f
+podman-compose logs -f
 
 # Listar el estado de todos los servicios definidos en el compose
-podman compose ps
+podman-compose ps
 
 # Reiniciar únicamente un servicio específico (ejemplo: db)
-podman compose restart db
+podman-compose restart db
 
 # Detener el stack manteniendo los datos persistentes de los volúmenes
-podman compose down
+podman-compose down
 
 # Detener el stack y eliminar todo incluyendo los volúmenes de datos (-v)
-podman compose down -v
+podman-compose down -v
 ```
 
 ---
