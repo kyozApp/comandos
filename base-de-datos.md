@@ -8,22 +8,18 @@
 
 - [1. Conexión a la Consola Interactiva (psql)](#1-conexión-a-la-consola-interactiva-psql)
 - [2. Meta-Comandos Esenciales dentro de psql](#2-meta-comandos-esenciales-dentro-de-psql)
-- [3. Sentencias SQL de Administración de Usuarios y DB](#3-sentencias-sql-de-administración-de-usuarios-y-db)
-- [4. Respaldos y Restauración Planos (.sql)](#4-respaldos-y-restauración-planos-sql)
-- [5. Respaldos Binarios y Disaster Recovery (.dump)](#5-respaldos-binarios-y-disaster-recovery-dump)
-- [6. Mantenimiento Avanzado: Alterar ENUM Nativo sin Pérdida](#6-mantenimiento-avanzado-alterar-enum-nativo-sin-pérdida)
-- [7. Flujos de Trabajo Agrupados](#7-flujos-de-trabajo-agrupados)
+- [3. Respaldos y Restauración Planos (.sql)](#3-respaldos-y-restauración-planos-sql)
+- [4. Respaldos Binarios y Disaster Recovery (.dump)](#4-respaldos-binarios-y-disaster-recovery-dump)
+- [5. Mantenimiento Avanzado: Alterar ENUM Nativo sin Pérdida](#5-mantenimiento-avanzado-alterar-enum-nativo-sin-pérdida)
+- [6. Flujos de Trabajo Agrupados](#6-flujos-de-trabajo-agrupados)
 
 ---
 
 ## 1. Conexión a la Consola Interactiva (psql)
 
 ```bash
-# Conectarse a psql dentro del contenedor Podman en desarrollo local
-podman exec -it dev_pg psql -U dev_user -d gol_comercial_db
-
-# Conectarse a psql dentro del contenedor Podman en producción (VPS)
-podman exec -it gol_comercial_prod_db psql -U prod_user -d gol_comercial_db
+# Conectarse a psql dentro del contenedor Podman
+podman exec -it dev_pg psql -U dev_user -d nombre_base_datos
 
 # Conectarse localmente como superusuario postgres en instalación nativa
 sudo -u postgres psql
@@ -58,25 +54,7 @@ sudo -u postgres psql
 
 ---
 
-## 3. Sentencias SQL de Administración de Usuarios y DB
-
-```sql
--- Crear un nuevo usuario con contraseña cifrada
-CREATE USER app_user WITH PASSWORD 'tu_clave_segura';
-
--- Crear una nueva base de datos asignando el usuario como dueño
-CREATE DATABASE app_db OWNER app_user;
-
--- Otorgar todos los privilegios sobre la base de datos al usuario
-GRANT ALL PRIVILEGES ON DATABASE app_db TO app_user;
-
--- Cambiar la contraseña de un usuario existente
-ALTER USER app_user WITH PASSWORD 'nueva_clave_segura';
-```
-
----
-
-## 4. Respaldos y Restauración Planos (.sql)
+## 3. Respaldos y Restauración Planos (.sql)
 
 ```bash
 # Exportar base de datos a archivo .sql plano desde Podman (incluye DROP previo)
@@ -94,7 +72,7 @@ psql -U usuario -h localhost -d mi_base_datos < backup.sql
 
 ---
 
-## 5. Respaldos Binarios y Disaster Recovery (.dump)
+## 4. Respaldos Binarios y Disaster Recovery (.dump)
 
 ```bash
 # Crear directorio de respaldos en el servidor
@@ -103,8 +81,8 @@ mkdir -p ~/backups/postgresql
 # Exportar copia de seguridad binaria comprimida (-Fc) para Disaster Recovery en producción
 podman exec -i gol_comercial_prod_db pg_dump -U prod_user -Fc -d gol_comercial_db > ~/backups/postgresql/backup-$(date +%F-%H%M%S).dump
 
-# Restaurar respaldo binario limpiando objetos existentes (--clean --if-exists)
-podman exec -i gol_comercial_prod_db pg_restore -U prod_user -d gol_comercial_db --clean --if-exists < ~/backups/postgresql/backup_a_restaurar.dump
+# Restaurar respaldo binario limpiando objetos existentes (--clean --if-exists --no-owner)
+podman exec -i gol_comercial_prod_db pg_restore -U prod_user -d gol_comercial_db --clean --if-exists --no-owner < ~/backups/postgresql/backup_a_restaurar.dump
 
 # Limpiar archivos temporales dentro del contenedor
 podman exec dev_pg sh -c "rm -f /tmp/*.sql /tmp/*.dump"
@@ -112,7 +90,7 @@ podman exec dev_pg sh -c "rm -f /tmp/*.sql /tmp/*.dump"
 
 ---
 
-## 6. Mantenimiento Avanzado: Alterar ENUM Nativo sin Pérdida
+## 5. Mantenimiento Avanzado: Alterar ENUM Nativo sin Pérdida
 
 ```sql
 -- ==============================================================================
@@ -145,7 +123,7 @@ ALTER TYPE "Role_new" RENAME TO "Role";
 
 ---
 
-## 7. Flujos de Trabajo Agrupados
+## 6. Flujos de Trabajo Agrupados
 
 ```bash
 # ==============================================================================
@@ -158,6 +136,13 @@ sudo -u postgres psql -c "CREATE USER kyoz_app WITH PASSWORD 'ClaveSegura2026!';
 # 2. Crear base de datos asignando dueño
 sudo -u postgres psql -c "CREATE DATABASE kyoz_db OWNER kyoz_app;"
 
-# 3. Asignar todos los privilegios
+# 3. Asignar todos los privilegios sobre la base de datos
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE kyoz_db TO kyoz_app;"
+
+# 4. Asignar privilegios sobre el esquema public (PostgreSQL 15+)
+sudo -u postgres psql -d kyoz_db -c "GRANT ALL ON SCHEMA public TO kyoz_app;"
 ```
+
+---
+
+[← Volver al README](README.md)

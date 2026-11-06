@@ -140,6 +140,9 @@ module.exports = {
 };
 ```
 
+> [!NOTE]
+> **Modo Cluster vs Fork:** `exec_mode: "cluster"` balancea peticiones HTTP entre todos los núcleos de CPU disponibles. Si tu aplicación ejecuta cron jobs internos o WebSockets con estado en memoria local, utiliza `exec_mode: "fork"` e `instances: 1` para impedir que las tareas programadas se ejecuten de forma duplicada.
+
 ### Comandos de control con Ecosystem
 
 ```bash
@@ -203,3 +206,7 @@ pm2 delete all
 # Guardar la lista actual de procesos para que se restauren tras reiniciar
 pm2 save
 ```
+
+---
+
+[← Volver al README](README.md)

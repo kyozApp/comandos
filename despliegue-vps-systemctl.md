@@ -62,7 +62,7 @@ sudo systemctl reset-failed
 > - **`Description`**: Nombre legible del servicio (ej. `mi-api REST Service`).
 > - **`User`**: Usuario de Linux que ejecutará el proceso (ej. `kyoz`).
 > - **`WorkingDirectory`**: Ruta absoluta hacia la raíz de tu proyecto en el servidor (ej. `/home/kyoz/proyectos/mi-api`).
-> - **`ExecStart`**: Ruta absoluta hacia el binario de Node (verifícalo con `which node`) junto al archivo ejecutable y la bandera `--env-file=.env`.
+> - **`ExecStart`**: Ruta absoluta hacia el binario de Node (verifícalo con `which node`, requiere Node >= 20.6.0 para `--env-file`) junto al archivo ejecutable y la bandera `--env-file=.env`.
 > - **`SyslogIdentifier`**: Identificador único que se usará para consultar los logs en Journalctl (`journalctl -u tu-identificador -f`).
 
 ```ini
@@ -134,7 +134,7 @@ ss -tulpn | grep 8220
 # Listar todos los servicios creados en el proyecto dentro de Systemd
 find /etc/systemd/system/ -maxdepth 1 -type f -name "*.service" -exec basename {} \;
 
-# Matar el proceso y liberar el puerto TCP inmediatamente
+# Matar el proceso y liberar el puerto TCP inmediatamente (si corre bajo Systemd, detén primero el servicio para que no reinicie en bucle)
 sudo fuser -k 8220/tcp
 ```
 
@@ -159,3 +159,7 @@ sudo systemctl status compartidos
 # 4. Probar la respuesta HTTP del endpoint de salud
 curl -I http://localhost:8220/health
 ```
+
+---
+
+[← Volver al README](README.md)

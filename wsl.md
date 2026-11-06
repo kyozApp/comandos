@@ -1,6 +1,6 @@
 # 🪟 Comandos de WSL2 en Windows
 
-> Referencia de comandos para la instalación del motor de WSL2, gestión de instancias, arranque, apagado y control desde PowerShell.
+> Referencia de comandos para la instalación del motor de WSL2, gestión de instancias, arranque, apagado, respaldos y control desde PowerShell.
 
 ---
 
@@ -9,6 +9,8 @@
 - [1. Motor de WSL](#1-motor-de-wsl)
 - [2. Listado de Distribuciones](#2-listado-de-distribuciones)
 - [3. Gestión de Instancias](#3-gestión-de-instancias)
+- [4. Copias de Seguridad y Clonación](#4-copias-de-seguridad-y-clonación)
+- [5. Optimización Global de Recursos (.wslconfig)](#5-optimización-global-de-recursos-wslconfig)
 
 ---
 
@@ -63,3 +65,33 @@ wsl --terminate <nombre-instancia>
 # Eliminar definitivamente una distribución y borrar todo su disco virtual (.vhdx)
 wsl --unregister <nombre-instancia>
 ```
+
+---
+
+## 4. Copias de Seguridad y Clonación
+
+```powershell
+# Exportar una copia de seguridad completa de una distribución a archivo comprimido .tar
+wsl --export <nombre-instancia> C:\backups\<nombre-instancia>.tar
+
+# Importar y restaurar la distribución asignándole una nueva carpeta de datos y nombre
+wsl --import <nuevo-nombre> C:\wsl\<nuevo-nombre> C:\backups\<nombre-instancia>.tar
+```
+
+---
+
+## 5. Optimización Global de Recursos (.wslconfig)
+
+> [!TIP]
+> Puedes limitar el consumo máximo de memoria RAM y núcleos de CPU que WSL2 puede tomar de Windows creando o editando el archivo `C:\Users\<TuUsuario>\.wslconfig`:
+
+```ini
+[wsl2]
+memory=8GB
+processors=4
+swap=4GB
+```
+
+---
+
+[← Volver al README](README.md)

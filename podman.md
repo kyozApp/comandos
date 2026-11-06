@@ -205,3 +205,7 @@ podman system prune -a
 # Limpieza total profunda: borra contenedores detenidos, imágenes sin uso y volúmenes huérfanos
 podman system prune -a --volumes
 ```
+
+---
+
+[← Volver al README](README.md)

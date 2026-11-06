@@ -115,3 +115,7 @@ pnpm prisma studio
 # Ejecutar el script de siembra (seed) de datos con tsx
 pnpm tsx src/prisma/seed.ts
 ```
+
+---
+
+[← Volver al README](README.md)

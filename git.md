@@ -104,11 +104,11 @@ git push
 #### Stash en main (Pausa de emergencia)
 
 > [!TIP]
-> **Caso de uso:** Estás programando a medias en `main`, alguien subió cambios a GitHub y quieres hacer `git pull`, pero Git te bloquea por tener cambios locales sin guardar.
+> **Caso de uso:** Estás programando a medias en `main`, alguien subió cambios a GitHub y quieres hacer `git pull`, pero Git te bloquea por tener cambios locales sin guardar. La bandera `-u` asegura incluir también archivos nuevos sin rastrear (_untracked_).
 
 ```bash
-# 1. Guardar tus cambios a medias en el stash para dejar main limpio
-git stash save "ajustes a medias en main"
+# 1. Guardar tus cambios a medias en el stash incluyendo archivos nuevos (-u) para dejar main limpio
+git stash push -u -m "ajustes a medias en main"
 
 # 2. Bajar los cambios remotos de GitHub sin bloqueos
 git pull origin main
@@ -176,8 +176,8 @@ gh pr create --title "feature: nueva funcionalidad" --body "Implementación list
 > **Caso de uso:** Estás a mitad de programar tu rama (código incompleto) y surge un error urgente que debes solucionar. En vez de tocar `main` directamente, pausas tu trabajo con stash, creas una rama dedicada `fix/`, resuelves el problema, envías la solicitud (Pull Request) a `main` y retomas tu código de inmediato.
 
 ```bash
-# 1. Guardar tus cambios a medias en el stash para dejar tu rama feature limpia
-git stash save "funcionalidad a medias"
+# 1. Guardar tus cambios a medias en el stash incluyendo archivos nuevos (-u) para dejar tu rama feature limpia
+git stash push -u -m "funcionalidad a medias"
 
 # 2. Cambiarte a main para partir desde la versión estable
 git switch main
@@ -208,3 +208,7 @@ git switch feature/nueva-funcionalidad
 # 11. Recuperar tus cambios a medias exactamente donde los dejaste
 git stash pop
 ```
+
+---
+
+[← Volver al README](README.md)

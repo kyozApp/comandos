@@ -46,6 +46,9 @@ sudo systemctl status caddy
 
 # Ver la versión instalada de Caddy
 caddy version
+
+# Abrir puertos HTTP (80) y HTTPS (443) en el firewall del VPS si usas UFW
+sudo ufw allow 80,443/tcp
 ```
 
 ---
@@ -100,6 +103,13 @@ app.tudominio.com {
 }
 ```
 
+> [!TIP]
+> **Permisos en sitios estáticos:** Caddy se ejecuta bajo el usuario del sistema `caddy:caddy`. Si el directorio en `/var/www/` fue creado por tu usuario habitual, asegúrate de otorgar permisos de lectura para evitar respuestas `403 Forbidden`:
+>
+> ```bash
+> sudo chown -R caddy:caddy /var/www/mi-sitio-estatico
+> ```
+
 ### Paso 3: Formatear el Caddyfile
 
 ```bash
@@ -151,3 +161,7 @@ journalctl -u caddy -f --no-pager
 # Ver las últimas 100 líneas de logs de Caddy sin paginador
 journalctl -u caddy -n 100 --no-pager
 ```
+
+---
+
+[← Volver al README](README.md)

@@ -78,7 +78,7 @@ default=kyoz
 exit
 
 # Habilitar persistencia (linger) permanente para el usuario
-sudo loginctl enable-linger $USER
+loginctl enable-linger $USER
 
 # Verificar que la persistencia quedó aplicada
 loginctl show-user $USER | grep Linger
@@ -94,22 +94,6 @@ sudo systemctl mask systemd-networkd-wait-online.service 2>/dev/null
 ---
 
 ## 3. Comandos del Sistema
-
-### Monitoreo de recursos y red
-
-```bash
-# Monitoreo interactivo de CPU, memoria y procesos en tiempo real
-htop
-
-# Ver uso de espacio en disco de las particiones montadas de forma legible
-df -h
-
-# Ver uso de memoria RAM y SWAP
-free -h
-
-# Ver las interfaces de red y direcciones IP asignadas
-ip a
-```
 
 ### Inspección y control de puertos
 
@@ -161,3 +145,7 @@ chmod 600 ~/.ssh/authorized_keys
 # Asignar permisos estrictos a la clave privada en tu máquina cliente
 chmod 600 ~/.ssh/id_ed25519
 ```
+
+---
+
+[← Volver al README](README.md)
