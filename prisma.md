@@ -1,16 +1,19 @@
 # ⚡ Comandos de Prisma 8 CLI y Data Contracts
 
-> Referencia de comandos CLI para la instalación con PNPM, inicialización interactiva, contratos de datos en TypeScript, migraciones y panel visual con Prisma 8 (100% Open Source y gratuito).
+> Referencia de comandos CLI para la instalación con PNPM, inicialización interactiva, contratos de datos en TypeScript, flujo profesional de migraciones en entornos de Desarrollo y Producción (`migration plan` + `db migrate`), y administración visual con Prisma 8.
 
 ---
 
 ## 📑 Índice
 
 - [1. Instalación y Configuración Inicial](#1-instalación-y-configuración-inicial)
-- [2. Inicialización de la Base de Datos (Primera vez)](#2-inicialización-de-la-base-de-datos-primera-vez)
-- [3. Modificaciones y Migraciones en Desarrollo](#3-modificaciones-y-migraciones-en-desarrollo)
-- [4. Despliegue en Producción e Introspección](#4-despliegue-en-producción-e-introspección)
-- [5. Panel Visual y Semillas (Seed)](#5-panel-visual-y-semillas-seed)
+- [2. Entorno de Desarrollo (Dev)](#2-entorno-de-desarrollo-dev)
+  - [2.1. Primera vez (Setup Inicial y Migración Base)](#21-primera-vez-setup-inicial-y-migración-base)
+  - [2.2. Actualizar (Flujo Diario de Modificaciones)](#22-actualizar-flujo-diario-de-modificaciones)
+- [3. Entorno de Producción (Prod)](#3-entorno-de-producción-prod)
+  - [3.1. Primera vez (Setup Inicial en Servidor)](#31-primera-vez-setup-inicial-en-servidor)
+  - [3.2. Actualizar (Despliegue de Nuevas Migraciones)](#32-actualizar-despliegue-de-nuevas-migraciones)
+- [4. Panel Visual y Semillas (Seed)](#4-panel-visual-y-semillas-seed)
 
 ---
 
@@ -55,58 +58,113 @@ pnpm prisma orm init --target postgres
 
 ---
 
-## 2. Inicialización de la Base de Datos (Primera vez)
+## 2. Entorno de Desarrollo (Dev)
+
+### 2.1. Primera vez (Setup Inicial y Migración Base)
+
+Para generar la primera migración oficial (`init`) desde un estado limpio y dejar la base de datos local lista y verificada:
 
 ```bash
 # 1. Compilar src/prisma/contract.ts y generar los artefactos tipados (contract.json y .d.ts)
 pnpm prisma contract emit
 
-# 2. Crear las tablas base en PostgreSQL por primera vez de forma aditiva y firmar la BD
-pnpm prisma db init
+# 2. Crear el paquete de migración inicial desde un estado vacío (@empty)
+pnpm prisma migration plan --from @empty --name "init"
 
-# 3. Comprobar que la base de datos física cumpla exactamente con el contrato emitido
+# 3. Aplicar la migración a la base de datos local
+pnpm prisma db migrate
+
+# 4. Verificar que la base de datos física cumpla exactamente con el contrato emitido
 pnpm prisma db verify
+
+# 5. Comprobar que el historial de migraciones esté al día y sin pendientes
+pnpm prisma migration status
 ```
+
+> Esto creará dentro de `migrations/app/` el paquete auditable con todas las instrucciones `CREATE TABLE`.
 
 ---
 
-## 3. Modificaciones y Migraciones en Desarrollo
+### 2.2. Actualizar (Flujo Diario de Modificaciones)
+
+Cada vez que agregues tablas, relaciones o campos en `src/prisma/contract.ts`:
 
 ```bash
-# 1. Recompilar los contratos tras modificar src/prisma/contract.ts
+# 1. Recompilar el contrato tras editar el esquema
 pnpm prisma contract emit
 
-# 2. Crear y aplicar la migración con nombre descriptivo en desarrollo
-pnpm prisma migrate dev --name agregar_usuarios
+# 2. Planificar la migración generando el paquete en disco
+pnpm prisma migration plan --name "agregar_campo_x"
 
-# 3. Conciliar y sincronizar los cambios en la base de datos
-pnpm prisma db update
+# Si renombraste un campo o modelo, usa --rename para evitar pérdida de datos:
+# pnpm prisma migration plan --rename Modelo.campo_viejo:Modelo.campo_nuevo --name "renombrar_campo"
 
-# 4. Verificar que no exista ninguna desalineación entre el contrato y la BD
+# 3. Aplicar la migración a tu base de datos local
+pnpm prisma db migrate
+
+# 4. Comprobar que no exista ninguna desalineación
 pnpm prisma db verify
+
+# 5. Comprobar que el historial de migraciones esté al día y sin pendientes
+pnpm prisma migration status
 ```
 
 ---
 
-## 4. Despliegue en Producción e Introspección
+## 3. Entorno de Producción (Prod)
+
+### 3.1. Primera vez (Setup Inicial en Servidor)
+
+#### Opción A: Base de datos en Producción limpia / vacía
+
+Si estás levantando la base de datos de producción desde cero:
 
 ```bash
-# Aplicar todas las migraciones pendientes en el servidor de producción
-pnpm prisma migrate deploy
+# 1. Ejecutar todo el grafo de migraciones en orden determinista
+pnpm prisma db migrate
 
-# Consultar el estado de las migraciones ejecutadas y pendientes
-pnpm prisma migrate status
+# 2. Verificar que la estructura física coincida con el contrato
+pnpm prisma db verify
 
-# Resetear la base de datos completa y reaplicar todas las migraciones (Desarrollo)
-pnpm prisma migrate reset --force
+# 3. Comprobar que el historial de migraciones esté al día
+pnpm prisma migration status
+```
 
-# Descargar la estructura de una base de datos existente hacia el esquema local (Introspección)
-pnpm prisma db pull
+#### Opción B: Base de datos en Producción que ya tiene las tablas creadas
+
+Si la base de datos ya contiene las tablas correspondientes al contrato actual:
+
+```bash
+# 1. Firmar la base de datos con el hash del contrato actual (sin reaplicar migraciones)
+pnpm prisma db sign
+
+# 2. Verificar que todo coincida al 100% sin discrepancias
+pnpm prisma db verify
+
+# 3. Consultar el estado del historial de migraciones
+pnpm prisma migration status
 ```
 
 ---
 
-## 5. Panel Visual y Semillas (Seed)
+### 3.2. Actualizar (Despliegue de Nuevas Migraciones)
+
+Una vez probados los cambios en desarrollo y tras realizar commit/push de la carpeta `migrations/`:
+
+```bash
+# 1. Aplicar las migraciones pendientes en el servidor de producción
+pnpm prisma db migrate
+
+# 2. Verificar que la base de datos física cumpla exactamente con el contrato emitido
+pnpm prisma db verify
+
+# 3. Consultar el estado y orden de las migraciones ejecutadas
+pnpm prisma migration status
+```
+
+---
+
+## 4. Panel Visual y Semillas (Seed)
 
 ```bash
 # Abrir el panel interactivo visual de administración de datos en el navegador (Prisma Studio)
