@@ -10,6 +10,7 @@
 - [2. Entorno de Desarrollo (Dev)](#2-entorno-de-desarrollo-dev)
   - [2.1. Primera vez (Setup Inicial y Migración Base)](#21-primera-vez-setup-inicial-y-migración-base)
   - [2.2. Actualizar (Flujo Diario de Modificaciones)](#22-actualizar-flujo-diario-de-modificaciones)
+  - [2.3. Resetear o Recrear Base de Datos Local (Desde Cero)](#23-resetear-o-recrear-base-de-datos-local-desde-cero)
 - [3. Entorno de Producción (Prod)](#3-entorno-de-producción-prod)
   - [3.1. Primera vez (Setup Inicial en Servidor)](#31-primera-vez-setup-inicial-en-servidor)
   - [3.2. Actualizar (Despliegue de Nuevas Migraciones)](#32-actualizar-despliegue-de-nuevas-migraciones)
@@ -71,8 +72,8 @@ pnpm prisma contract emit
 # 2. Crear el paquete de migración inicial desde un estado vacío (@empty)
 pnpm prisma migration plan --from @empty --name "init"
 
-# 3. Aplicar la migración a la base de datos local
-pnpm prisma db migrate
+# 3. Aplicar la migración a la base de datos local y fijar el puntero de referencia 'db'
+pnpm prisma db migrate --advance-ref db
 
 # 4. Verificar que la base de datos física cumpla exactamente con el contrato emitido
 pnpm prisma db verify
@@ -81,7 +82,8 @@ pnpm prisma db verify
 pnpm prisma migration status
 ```
 
-> Esto creará dentro de `migrations/app/` el paquete auditable con todas las instrucciones `CREATE TABLE`.
+> [!NOTE]
+> **¿Por qué `--advance-ref db`?** Prisma 8 utiliza el puntero de referencia `db` (guardado en `migrations/app/refs/db.json`) como punto de origen para futuras planificaciones. Si omites `--advance-ref db`, el puntero no se creará y el siguiente `migration plan` fallará con `[MIGRATION.PLAN_ORIGIN_UNKNOWN]`.
 
 ---
 
@@ -93,19 +95,39 @@ Cada vez que agregues tablas, relaciones o campos en `src/prisma/contract.ts`:
 # 1. Recompilar el contrato tras editar el esquema
 pnpm prisma contract emit
 
-# 2. Planificar la migración generando el paquete en disco
+# 2. Planificar la migración generando el paquete en disco (toma el puntero 'db' automáticamente)
 pnpm prisma migration plan --name "agregar_campo_x"
 
 # Si renombraste un campo o modelo, usa --rename para evitar pérdida de datos:
 # pnpm prisma migration plan --rename Modelo.campo_viejo:Modelo.campo_nuevo --name "renombrar_campo"
 
-# 3. Aplicar la migración a tu base de datos local
-pnpm prisma db migrate
+# 3. Aplicar la migración a tu base de datos local y avanzar el puntero 'db'
+pnpm prisma db migrate --advance-ref db
 
 # 4. Comprobar que no exista ninguna desalineación
 pnpm prisma db verify
 
 # 5. Comprobar que el historial de migraciones esté al día y sin pendientes
+pnpm prisma migration status
+```
+
+---
+
+### 2.3. Resetear o Recrear Base de Datos Local (Desde Cero)
+
+> [!WARNING]
+> En desarrollo puedes vaciar, borrar o recrear la base de datos PostgreSQL local cuantas veces quieras, pero **NUNCA borres la carpeta `migrations/`**, ya que contiene el historial inmutable versionado en Git.
+
+Si borraste y recreaste tu base de datos local en PostgreSQL (o si un compañero clona el proyecto en una máquina limpia):
+
+```bash
+# 1. Reaplicar todo el historial de migraciones existentes a la base de datos limpia y fijar el puntero
+pnpm prisma db migrate --advance-ref db
+
+# 2. Verificar que la base de datos física cumpla al 100% con el contrato emitido
+pnpm prisma db verify
+
+# 3. Comprobar que el historial de migraciones esté al día y sin pendientes
 pnpm prisma migration status
 ```
 
@@ -138,12 +160,18 @@ Si la base de datos ya contiene las tablas correspondientes al contrato actual:
 # 1. Firmar la base de datos con el hash del contrato actual (sin reaplicar migraciones)
 pnpm prisma db sign
 
-# 2. Verificar que todo coincida al 100% sin discrepancias
+# 2. Establecer el puntero de referencia 'db' al contrato firmado actual
+pnpm prisma migration ref set db @contract
+
+# 3. Verificar que todo coincida al 100% sin discrepancias
 pnpm prisma db verify
 
-# 3. Consultar el estado del historial de migraciones
+# 4. Consultar el estado del historial de migraciones
 pnpm prisma migration status
 ```
+
+> [!TIP]
+> En entornos de producción y CI/CD, `pnpm prisma db migrate` se ejecuta **sin** `--advance-ref` para no modificar ni ensuciar el repositorio Git en el servidor. Los archivos de referencia (`refs/db.json`) viajan controlados mediante Git desde desarrollo.
 
 ---
 
