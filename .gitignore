@@ -2,3 +2,7 @@
 /skills/
 /.agents/
 /.gemini/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

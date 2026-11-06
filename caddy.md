@@ -1,6 +1,6 @@
 # 🔒 Comandos de Caddy (Servidor Web y Proxy Inverso)
 
-> Referencia de comandos para la instalación oficial, control del servicio Systemd, pasos para desplegar proyectos y plantillas para proyectos estáticos y dinámicos (Node.js, SvelteKit, Hono).
+> Referencia de comandos para la instalación oficial en formato moderno DEB822, control del servicio Systemd, despliegue de proyectos y plantillas para aplicaciones estáticas y dinámicas (Node.js, SvelteKit, Hono).
 
 ---
 
@@ -16,21 +16,37 @@
 ## 1. Instalación Oficial
 
 ```bash
-# Instalar dependencias de transporte seguro, llaveros y curl
-sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+# Instalar dependencias para verificación de llaveros y descarga por HTTPS
+sudo apt update
+sudo apt install -y debian-keyring debian-archive-keyring curl gpg
 
 # Descargar y registrar la clave GPG oficial de Caddy
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
 
-# Agregar el repositorio oficial de Caddy a la lista de fuentes de APT
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+# Asegurar permisos de lectura para la llave GPG
+sudo chmod 644 /usr/share/keyrings/caddy-stable-archive-keyring.gpg
 
-# Asegurar permisos de lectura para que APT pueda leer las llaves
-sudo chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-sudo chmod o+r /etc/apt/sources.list.d/caddy-stable.list
+# Crear la fuente APT en formato moderno DEB822 (.sources)
+sudo nano /etc/apt/sources.list.d/caddy-stable.sources
+```
+
+**Contenido para `/etc/apt/sources.list.d/caddy-stable.sources`:**
+
+```ini
+Types: deb
+URIs: https://dl.cloudsmith.io/public/caddy/stable/deb/debian
+Suites: any-version
+Components: main
+Signed-By: /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+```
+
+```bash
+# Asegurar permisos de lectura en la fuente APT
+sudo chmod 644 /etc/apt/sources.list.d/caddy-stable.sources
 
 # Actualizar repositorios e instalar Caddy
-sudo apt update && sudo apt install -y caddy
+sudo apt update
+sudo apt install -y caddy
 ```
 
 ---
@@ -58,8 +74,8 @@ sudo ufw allow 80,443/tcp
 ### Paso 1: Comprobar DNS (Solo si usas dominio)
 
 ```bash
-# Verificar que el dominio apunte a la IP pública de tu VPS antes de pedir SSL
-nslookup api.tudominio.com
+# Verificar que el dominio resuelva a la IP pública de tu VPS antes de pedir SSL
+resolvectl query api.tudominio.com
 ```
 
 ### Paso 2: Editar el Caddyfile
@@ -73,12 +89,12 @@ sudo nano /etc/caddy/Caddyfile
 
 ```caddyfile
 # 1. Proyecto Dinámico (API Node / PM2 en puerto interno)
-http://200.58.103.96 {
+http://<ip_publica_vps> {
     reverse_proxy localhost:3000
 }
 
 # 2. Proyecto Estático (Archivos web servidos desde carpeta en puerto alternativo)
-http://200.58.103.96:8080 {
+http://<ip_publica_vps>:8080 {
     root * /var/www/mi-sitio-estatico
     encode gzip zstd
     file_server

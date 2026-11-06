@@ -26,7 +26,7 @@ pnpm add -D prisma
 ### Aprobación de binarios nativos en PNPM
 
 > [!IMPORTANT]
-> En versiones modernas de PNPM (v10 y v11+), los scripts de compilación de dependencias nativas se bloquean por defecto por seguridad arrojando la advertencia `[ERR_PNPM_IGNORED_BUILDS]`.
+> En versiones modernas de PNPM (v10+, incluido v12), los scripts de compilación de dependencias nativas se bloquean por defecto por seguridad arrojando la advertencia `[ERR_PNPM_IGNORED_BUILDS]`.
 
 ```bash
 # Autorizar scripts de compilación requeridos por Prisma (msgpackr-extract, workerd)

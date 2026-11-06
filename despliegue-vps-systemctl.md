@@ -17,11 +17,11 @@
 ## 1. Sincronización de Código con Exclusiones (Rsync)
 
 ```bash
-# Sincronizar proyecto API/Backend hacia el VPS por puerto SSH 27 con exclusiones
-rsync -avz -e 'ssh -p 27' --exclude 'node_modules/' --exclude '.git/' --exclude 'dist/' --exclude 'build/' --exclude '.env' --exclude '.agents' --exclude 'skills' --exclude '.trae' ~/proyectos/aduamerica/compartidos/ kyoz@192.168.1.211:~/proyectos/compartidos/
+# Sincronizar proyecto API/Backend hacia el VPS por SSH con exclusiones
+rsync -avz -e 'ssh -p <puerto_ssh>' --exclude 'node_modules/' --exclude '.git/' --exclude 'dist/' --exclude 'build/' --exclude '.env' --exclude '.agents' --exclude 'skills' ~/proyectos/<mi_proyecto>/ <usuario>@<ip_servidor>:~/proyectos/<mi_proyecto>/
 
 # Simular la sincronización sin realizar cambios reales en disco (--dry-run)
-rsync -avz --dry-run -e 'ssh -p 27' --exclude 'node_modules/' --exclude '.git/' ~/proyectos/aduamerica/compartidos/ kyoz@192.168.1.211:~/proyectos/compartidos/
+rsync -avz --dry-run -e 'ssh -p <puerto_ssh>' --exclude 'node_modules/' --exclude '.git/' ~/proyectos/<mi_proyecto>/ <usuario>@<ip_servidor>:~/proyectos/<mi_proyecto>/
 ```
 
 ---
@@ -30,25 +30,25 @@ rsync -avz --dry-run -e 'ssh -p 27' --exclude 'node_modules/' --exclude '.git/' 
 
 ```bash
 # Crear o editar el archivo de configuración del servicio en Systemd
-sudo nano /etc/systemd/system/compartidos.service
+sudo nano /etc/systemd/system/<mi_servicio>.service
 
 # Recargar el daemon para registrar cambios en los archivos de servicio
 sudo systemctl daemon-reload
 
 # Habilitar el inicio automático al reiniciar el servidor y arrancar inmediatamente
-sudo systemctl enable --now compartidos
+sudo systemctl enable --now <mi_servicio>
 
 # Reiniciar el servicio tras compilar una nueva versión
-sudo systemctl restart compartidos
+sudo systemctl restart <mi_servicio>
 
 # Ver el estado y consumo de recursos en tiempo real del servicio
-sudo systemctl status compartidos
+sudo systemctl status <mi_servicio>
 
 # Detener el servicio inmediatamente
-sudo systemctl stop compartidos
+sudo systemctl stop <mi_servicio>
 
 # Deshabilitar el arranque automático
-sudo systemctl disable compartidos
+sudo systemctl disable <mi_servicio>
 
 # Limpiar cualquier estado residual de fallos en memoria
 sudo systemctl reset-failed
@@ -60,21 +60,21 @@ sudo systemctl reset-failed
 > **Campos que debes actualizar según tu proyecto:**
 >
 > - **`Description`**: Nombre legible del servicio (ej. `mi-api REST Service`).
-> - **`User`**: Usuario de Linux que ejecutará el proceso (ej. `kyoz`).
-> - **`WorkingDirectory`**: Ruta absoluta hacia la raíz de tu proyecto en el servidor (ej. `/home/kyoz/proyectos/mi-api`).
-> - **`ExecStart`**: Ruta absoluta hacia el binario de Node (verifícalo con `which node`, requiere Node >= 20.6.0 para `--env-file`) junto al archivo ejecutable y la bandera `--env-file=.env`.
-> - **`SyslogIdentifier`**: Identificador único que se usará para consultar los logs en Journalctl (`journalctl -u tu-identificador -f`).
+> - **`User`**: Usuario de Linux sin privilegios root que ejecutará el proceso (`<usuario>`).
+> - **`WorkingDirectory`**: Ruta absoluta hacia la raíz de tu proyecto en el servidor (ej. `/home/<usuario>/proyectos/mi-api`).
+> - **`ExecStart`**: Ruta absoluta hacia el binario estable de Node (verifícalo con `which node`, requiere Node >= 20.6.0 para `--env-file`) junto al archivo compilado y `--env-file=.env`.
+> - **`SyslogIdentifier`**: Identificador único que se usará para consultar los logs en Journalctl (`journalctl -u <mi_servicio> -f`).
 
 ```ini
 [Unit]
-Description=compartidos REST Service
+Description=mi-api REST Service
 After=network.target
 
 [Service]
 Type=simple
-User=kyoz
-WorkingDirectory=/home/kyoz/proyectos/compartidos
-ExecStart=/home/kyoz/.local/share/pnpm/bin/node --env-file=.env dist/index.js
+User=<usuario>
+WorkingDirectory=/home/<usuario>/proyectos/mi-api
+ExecStart=/home/<usuario>/.local/share/pnpm/bin/node --env-file=.env dist/index.js
 Restart=always
 RestartSec=5
 Environment=NODE_ENV=production
@@ -90,7 +90,7 @@ MemoryHigh=800M
 # Logs centralizados con Journald
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=compartidos
+SyslogIdentifier=mi-api
 
 [Install]
 WantedBy=multi-user.target
@@ -102,19 +102,19 @@ WantedBy=multi-user.target
 
 ```bash
 # Seguir los logs en vivo y en tiempo real de la API
-journalctl -u compartidos -f
+journalctl -u <mi_servicio> -f
 
 # Ver las últimas 100 líneas combinadas sin paginador
-journalctl -u compartidos -n 100 --no-pager
+journalctl -u <mi_servicio> -n 100 --no-pager
 
 # Filtrar exclusivamente los mensajes de error (sin ruido informativo)
-journalctl -u compartidos -p err --no-pager
+journalctl -u <mi_servicio> -p err --no-pager
 
 # Ver logs de una ventana de tiempo específica (ejemplo: últimos 15 minutos)
-journalctl -u compartidos --since "15 minutes ago"
+journalctl -u <mi_servicio> --since "15 minutes ago"
 
 # Ver únicamente los logs generados desde el último reinicio del servidor (-b)
-journalctl -u compartidos -b
+journalctl -u <mi_servicio> -b
 
 # Verificar el uso total de espacio en disco de los logs del sistema
 journalctl --disk-usage
@@ -126,16 +126,16 @@ journalctl --disk-usage
 
 ```bash
 # Probar respuesta HTTP real del endpoint de salud
-curl -I http://localhost:8220/health
+curl -I http://localhost:3000/health
 
 # Comprobar que el puerto esté activo y en escucha en el sistema
-ss -tulpn | grep 8220
+ss -tulpn | grep 3000
 
-# Listar todos los servicios creados en el proyecto dentro de Systemd
+# Listar todos los servicios personalizados creados en Systemd
 find /etc/systemd/system/ -maxdepth 1 -type f -name "*.service" -exec basename {} \;
 
-# Matar el proceso y liberar el puerto TCP inmediatamente (si corre bajo Systemd, detén primero el servicio para que no reinicie en bucle)
-sudo fuser -k 8220/tcp
+# Matar el proceso y liberar el puerto TCP inmediatamente (si corre bajo Systemd, detén primero el servicio)
+sudo fuser -k 3000/tcp
 ```
 
 ---
@@ -147,17 +147,18 @@ sudo fuser -k 8220/tcp
 # Flujo: Despliegue de actualización en el servidor VPS
 # ==============================================================================
 
-# 1. En el VPS, entrar al directorio y compilar la nueva versión
-cd ~/proyectos/compartidos && pnpm build
+# 1. En el VPS, entrar al directorio del proyecto y compilar la nueva versión
+cd ~/proyectos/<mi_proyecto>
+pnpm build
 
 # 2. Reiniciar el servicio para aplicar los cambios del nuevo build
-sudo systemctl restart compartidos
+sudo systemctl restart <mi_servicio>
 
 # 3. Comprobar que el servicio haya arrancado con éxito
-sudo systemctl status compartidos
+sudo systemctl status <mi_servicio>
 
 # 4. Probar la respuesta HTTP del endpoint de salud
-curl -I http://localhost:8220/health
+curl -I http://localhost:3000/health
 ```
 
 ---

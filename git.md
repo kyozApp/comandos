@@ -16,8 +16,9 @@
 ## 1. Instalación y Autenticación en Linux
 
 ```bash
-# Instalar Git y GitHub CLI en Ubuntu/Debian
-sudo apt install git gh -y
+# Actualizar repositorios e instalar Git y GitHub CLI en Ubuntu / Debian
+sudo apt update
+sudo apt install -y git gh
 
 # Iniciar sesión en GitHub mediante autenticación web en el navegador
 gh auth login

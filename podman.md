@@ -20,7 +20,8 @@
 ## 1. Instalación
 
 ```bash
-# Instalar Podman y el plugin de Compose en Ubuntu / Debian
+# Actualizar repositorios e instalar Podman junto al proveedor de Compose
+sudo apt update
 sudo apt install -y podman podman-compose
 ```
 
@@ -44,10 +45,10 @@ loginctl enable-linger $USER
 loginctl show-user $USER | grep Linger
 ```
 
-### Configuración del motor de Podman (containers.conf)
+### Configuración opcional del motor (containers.conf)
 
 > [!TIP]
-> Esta configuración previene errores de cgroups y registros de logs al ejecutar Podman en WSL2 o entornos con múltiples distribuciones.
+> En Ubuntu 26 con Systemd activo, Podman 5+ utiliza `systemd` (cgroups v2) y `journald` de forma nativa sin configuración adicional. Puedes crear `containers.conf` si deseas silenciar el aviso informativo del proveedor externo al ejecutar `podman compose`.
 
 ```bash
 # Crear la carpeta de configuración de usuario si no existe
@@ -60,13 +61,12 @@ nano ~/.config/containers/containers.conf
 **Contenido para `~/.config/containers/containers.conf`:**
 
 ```toml
-[containers]
-log_driver = "k8s-file"
-
 [engine]
-cgroup_manager = "cgroupfs"
-events_logger = "file"
+compose_warning_logs = false
 ```
+
+> [!NOTE]
+> Solo en entornos antiguos **sin Systemd** sería necesario definir `cgroup_manager = "cgroupfs"` y `events_logger = "file"` en `[engine]`, junto con `log_driver = "k8s-file"` en `[containers]`.
 
 ---
 
@@ -84,27 +84,30 @@ podman info
 
 ## 4. Orquestación con Podman Compose
 
+> [!NOTE]
+> Podman 5+ incluye el subcomando nativo `podman compose` (con espacio), que delega automáticamente en `podman-compose`.
+
 ```bash
 # Levantar el stack multicontenedor en segundo plano
-podman-compose up -d
+podman compose up -d
 
 # Levantar servicios forzando la reconstrucción previa de imágenes
-podman-compose up -d --build
+podman compose up -d --build
 
 # Ver y seguir en tiempo real los registros de todo el stack
-podman-compose logs -f
+podman compose logs -f
 
 # Listar el estado de todos los servicios definidos en el compose
-podman-compose ps
+podman compose ps
 
-# Reiniciar únicamente un servicio específico (ejemplo: postgres)
-podman-compose restart postgres
+# Reiniciar únicamente un servicio específico (ejemplo: db)
+podman compose restart db
 
 # Detener el stack manteniendo los datos persistentes de los volúmenes
-podman-compose down
+podman compose down
 
 # Detener el stack y eliminar todo incluyendo los volúmenes de datos (-v)
-podman-compose down -v
+podman compose down -v
 ```
 
 ---
@@ -125,7 +128,7 @@ podman logs -f <nombre_o_id>
 podman exec -it <nombre_contenedor> sh
 
 # Acceder a la consola de base de datos dentro de un contenedor PostgreSQL (ejemplo)
-podman exec -it dev_pg psql -U usuario -d app_db
+podman exec -it dev_pg psql -U dev_user -d <nombre_bd>
 
 # Reiniciar un contenedor rápidamente si se traba
 podman restart <nombre_contenedor>
@@ -142,7 +145,10 @@ podman rm -f <nombre_contenedor>
 # Forzar la eliminación de todos los contenedores existentes (activos o detenidos)
 podman rm -a -f
 
-# Ver consumo de CPU y RAM de los contenedores en tiempo real
+# Monitorear consumo de CPU y RAM de los contenedores en tiempo real (Ctrl + C para salir)
+podman stats
+
+# Ver una instantánea puntual del consumo de CPU y RAM sin quedarse en bucle
 podman stats --no-stream
 ```
 
@@ -161,13 +167,10 @@ podman pull docker.io/library/postgres:18-alpine
 podman rmi <nombre_o_id_imagen>
 
 # Eliminar únicamente las imágenes huérfanas sin etiqueta (<none> o dangling)
-podman image prune
+podman image prune -f
 
 # Eliminar todas las imágenes que no estén asociadas a al menos un contenedor
-podman image prune -a
-
-# Forzar la eliminación de todas las imágenes huérfanas mediante consulta de IDs
-podman rmi -f $(podman images -f "dangling=true" -q)
+podman image prune -a -f
 ```
 
 ---
@@ -191,7 +194,7 @@ podman volume inspect <nombre_volumen>
 podman volume rm <nombre_volumen>
 
 # Eliminar todos los volúmenes que no estén asociados a ningún contenedor
-podman volume prune
+podman volume prune -f
 ```
 
 ---

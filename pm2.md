@@ -1,13 +1,13 @@
 # ⚙️ Comandos de PM2 (Gestor de Procesos en Segundo Plano)
 
-> Referencia de comandos para la instalación, persistencia con Systemd/fnm, prueba rápida, ejecución de aplicaciones con Ecosystem File y gestión con PM2.
+> Referencia de comandos para la instalación, persistencia con Systemd, prueba rápida, ejecución de aplicaciones con Ecosystem File y gestión con PM2.
 
 ---
 
 ## 📑 Índice
 
 - [1. Instalación](#1-instalación)
-- [2. Configuración y Persistencia (Systemd y fnm)](#2-configuración-y-persistencia-systemd-y-fnm)
+- [2. Configuración y Persistencia (Systemd)](#2-configuración-y-persistencia-systemd)
 - [3. Prueba Rápida](#3-prueba-rápida)
 - [4. Ejecución de Aplicaciones con Ecosystem File](#4-ejecución-de-aplicaciones-con-ecosystem-file)
 - [5. Monitoreo y Logs](#5-monitoreo-y-logs)
@@ -30,7 +30,7 @@ pm2 install pm2-logrotate
 
 ---
 
-## 2. Configuración y Persistencia (Systemd y fnm)
+## 2. Configuración y Persistencia (Systemd)
 
 ### Configurar rotación de logs (pm2-logrotate)
 
@@ -51,21 +51,14 @@ pm2 set pm2-logrotate:compress true
 ### Configurar inicio automático con el sistema (Systemd)
 
 > [!CAUTION]
-> **fnm crea rutas temporales de sesión** (`/run/user/1000/fnm_multishells/...`) que desaparecen al cerrar la terminal o reiniciar.
-> Si ejecutas `pm2 startup` directamente, el servicio fallará con `status=127` (_"node: No such file or directory"_).
-> Debes anteponer la **ruta estable** de fnm antes de generar el servicio.
+> El servicio de Systemd debe apuntar a una **ruta estable** de Node. Con `pnpm runtime` la ruta es `~/.local/share/pnpm/bin/node`.
+> Si usas gestores con rutas temporales de sesión (como `fnm` con `/run/user/1000/fnm_multishells/...`), el servicio fallará tras reiniciar con `status=127` (_"node: No such file or directory"_).
 
 ```bash
-# 1. Ver la versión exacta de Node instalada por fnm (ejemplo: v24.20.0)
-ls ~/.local/share/fnm/node-versions/
-
-# 2. Anteponer la ruta estable de Node al PATH de esta sesión (reemplaza vX.Y.Z)
-export PATH="$HOME/.local/share/fnm/node-versions/vX.Y.Z/installation/bin:$PATH"
-
-# 3. Confirmar que apunta a la ruta estable y NO a fnm_multishells
+# 1. Confirmar que Node apunta a la ruta estable de pnpm (~/.local/share/pnpm/bin/node)
 which node
 
-# 4. Generar el servicio Systemd con la ruta estable activa en el PATH
+# 2. Generar el servicio Systemd con la ruta actual de Node en el PATH
 pm2 startup
 ```
 
@@ -73,10 +66,10 @@ pm2 startup
 > `pm2 startup` imprime en pantalla un comando con `sudo` que **debes copiar y ejecutar manualmente**.
 
 ```bash
-# 5. Confirmar que el servicio quedó con la ruta estable
-cat /etc/systemd/system/pm2-kyoz.service | grep -i "node"
+# 3. Confirmar que el servicio quedó con la ruta estable
+grep -i "path" /etc/systemd/system/pm2-$USER.service
 
-# 6. Congelar la lista base vacía y generar el archivo de persistencia
+# 4. Congelar la lista base vacía y generar el archivo de persistencia
 pm2 save --force
 ```
 
@@ -86,8 +79,16 @@ pm2 save --force
 
 ```bash
 # Crear script mínimo de prueba en Node.js
-echo "setInterval(() => console.log('hello world'), 2000)" > hello.js
+nano hello.js
+```
 
+**Contenido para `hello.js`:**
+
+```javascript
+setInterval(() => console.log("hello world"), 2000);
+```
+
+```bash
 # Iniciar el proceso de prueba con PM2
 pm2 start hello.js
 
